@@ -1,0 +1,25 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && \
+    apt-get install build-essential wget -y
+
+RUN wget https://deb.nodesource.com/setup_8.x
+RUN chmod +x setup_8.x
+RUN bash setup_8.x
+RUN apt-get install nodejs iputils-ping -y
+
+COPY ./socket_service /socket_service
+
+WORKDIR /socket_service
+
+RUN apt-get remove -y build-essential && \
+    apt-get autoremove -y && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /root/.cache
+
+RUN ["chmod", "777", "/socket_service/start.sh"]
+
+CMD ["/socket_service/start.sh"]
+
+EXPOSE 4000

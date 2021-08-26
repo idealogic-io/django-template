@@ -1,0 +1,10 @@
+/k8s/secret.yml
+/socket_service/node_modules/
+/django_boilerplate_rabbit_data/
+/django_boilerplate_pg_data/
+*__pycache__/
+/.idea/
+/processing/images/*.jpeg
+/processing/documents/*.docx
+/processing/documents/challenge/*.docx
+/processing/documents/compare/*.docx

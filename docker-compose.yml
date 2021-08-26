@@ -1,0 +1,109 @@
+version: '3'
+
+services:
+  django_boilerplate_pg:
+    image: "sameersbn/postgresql:9.6-2"
+    container_name: django_boilerplate_pg
+    hostname: django_boilerplate_pg
+    restart: always
+    env_file: "./docker/environments"
+    ports:
+      - "5433:5432"
+    environment:
+      - TZ=Etc/GMT
+    volumes:
+      - ./django_boilerplate_pg_data:/var/lib/postgresql/9.6/main
+
+  django_boilerplate_app:
+    container_name: django_boilerplate_app
+    hostname: django_boilerplate_app
+    restart: always
+    build: ./
+    volumes:
+      - ./core:/django_boilerplate_app/core
+      - ./users:/django_boilerplate_app/users
+    ports:
+      - "8000:8000"
+    env_file: "./docker/environments"
+    environment:
+      - TZ=Etc/GMT
+    depends_on:
+      - django_boilerplate_pg
+#      - django_boilerplate_rabbit
+
+#  beat_worker:
+#    build: .
+#    entrypoint: bash -c "/django_boilerplate_app/docker/beat_worker.sh"
+#    working_dir: /django_boilerplate_app
+#    env_file: "./docker/environments"
+#    volumes:
+#      - .:/django_boilerplate_app
+#    environment:
+#      - TZ=Etc/GMT
+#    links:
+#      - django_boilerplate_pg
+#      - django_boilerplate_rabbit
+#
+#  django_boilerplate_rabbit:
+#    image: rabbitmq:latest
+#    hostname: rabbitmq1
+#    restart: always
+#    environment:
+#        - RABBITMQ_DEFAULT_USER=admin
+#        - RABBITMQ_DEFAULT_PASS=mypass
+#        - RABBITMQ_DEFAULT_VHOST=vhost
+#        - RABBITMQ_LOG_BASE=/var/lib/rabbitmq/logs
+#        - TZ=Etc/GMT
+#    ports:
+#        - "5672:5672"
+#    volumes:
+#      - ./django_boilerplate_rabbit_data:/var/lib/rabbitmq
+
+#  django_boilerplate_worker:
+#    build: .
+#    entrypoint: bash -c "/django_boilerplate_app/docker/start_worker.sh"
+#    working_dir: /django_boilerplate_app
+#    env_file: "./docker/environments"
+#    volumes:
+#      - .:/django_boilerplate_app
+#    environment:
+#      - TZ=Etc/GMT
+#    links:
+#      - django_boilerplate_pg
+#      - django_boilerplate_rabbit
+
+#  flower:
+#    build: ./
+#    command: celery flower --broker=amqp://admin:mypass@django_boilerplate-rabbit:5672/vhost --broker_api=http://admin:mypass@bpi_rabbit:5672/vhost
+#    ports:
+#      - "5555:5555"
+#      - "15672:15672"
+#    environment:
+#      - TZ=Etc/GMT
+#    links:
+#      - django_boilerplate_pg
+#      - django_boilerplate_rabbit
+
+#  django_boilerplate_socket_service:
+#    container_name: django_boilerplate_socket_service
+#    hostname: django_boilerplate_socket_service
+#    restart: always
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile-nodejs
+#    volumes:
+#      - ./socket_service:/socket_service
+#    ports:
+#      - "4000:4000"
+#    depends_on:
+#      - django_boilerplate_rabbit
+#      - django_boilerplate_app
+#    environment:
+#      - TZ=Etc/GMT
+#    links:
+#      - django_boilerplate_rabbit
+#      - django_boilerplate_app:django_boilerplate_app
+
+volumes:
+  django_boilerplate_pg_data:
+  django_boilerplate_rabbit_data:
